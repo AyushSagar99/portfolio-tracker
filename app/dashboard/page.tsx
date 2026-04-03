@@ -7,14 +7,13 @@
   import { PortfolioSummary } from "@/components/PortfolioSummary";
   import { TokenList } from "@/components/TokenList";
   import { PortfolioChart } from "@/components/PortfolioChart";
+  import { useChain } from "@/lib/ChainContext";
 
   export default function DashboardPage() {
     const { address } = useAccount();
     const [tokens, setTokens] = useState<Token[]>([]);
     const [loading, setLoading] = useState(true);
-
-    // TODO: get selectedChain from layout context — hardcoded to 1 for now
-    const selectedChain = 1;
+    const { selectedChain } = useChain();
 
     useEffect(() => {
       if (!address) return;

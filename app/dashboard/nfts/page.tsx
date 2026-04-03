@@ -2,13 +2,13 @@
 import { useAccount } from "wagmi";
 import { useEffect, useState } from "react";
 import { getNFTsForOwner, NFTItem } from "@/lib/alchemy";
+import { useChain } from "@/lib/ChainContext";
 
 export default function NFTsPage() {
   const { address } = useAccount();
   const [nfts, setNfts] = useState<NFTItem[]>([]);
   const [loading, setLoading] = useState(true);
-
-  const selectedChain = 1;
+  const { selectedChain } = useChain();
 
   useEffect(() => {
     if (!address) return;

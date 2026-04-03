@@ -2,6 +2,23 @@
 import { useAccount } from "wagmi";
 import { useEffect, useState } from "react";
 import { Alchemy, Network } from "alchemy-sdk";
+import { useChain } from "@/lib/ChainContext";
+
+const chainToNetwork: Record<number, Network> = {
+  1: Network.ETH_MAINNET,
+  137: Network.MATIC_MAINNET,
+  8453: Network.BASE_MAINNET,
+  42161: Network.ARB_MAINNET,
+  10: Network.OPT_MAINNET,
+};
+
+const chainNames: Record<number, string> = {
+  1: "Ethereum",
+  137: "Polygon",
+  8453: "Base",
+  42161: "Arbitrum",
+  10: "Optimism",
+};
 
 type AirdropTask = {
   label: string;
@@ -78,6 +95,7 @@ const statusColors: Record<string, string> = {
 
 export default function AirdropsPage() {
   const { address } = useAccount();
+  const { selectedChain } = useChain();
   const [txCount, setTxCount] = useState(0);
   const [loading, setLoading] = useState(true);
 
@@ -87,9 +105,10 @@ export default function AirdropsPage() {
     async function fetchActivity() {
       setLoading(true);
       try {
+        const network = chainToNetwork[selectedChain] || Network.ETH_MAINNET;
         const alchemy = new Alchemy({
           apiKey: process.env.NEXT_PUBLIC_ALCHEMY_API_KEY,
-          network: Network.ETH_MAINNET,
+          network,
         });
         const count = await alchemy.core.getTransactionCount(address!);
         setTxCount(count);
@@ -101,7 +120,7 @@ export default function AirdropsPage() {
     }
 
     fetchActivity();
-  }, [address]);
+  }, [address, selectedChain]);
 
   if (loading) {
     return (
@@ -116,7 +135,7 @@ export default function AirdropsPage() {
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-bold text-white">Airdrop Tracker</h2>
         <p className="text-gray-400 text-sm">
-          Your Ethereum transactions: <span className="text-white font-medium">{txCount}</span>
+          Your {chainNames[selectedChain] || "chain"} transactions: <span className="text-white font-medium">{txCount}</span>
         </p>
       </div>
 

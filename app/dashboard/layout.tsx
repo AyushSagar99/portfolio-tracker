@@ -1,8 +1,8 @@
 "use client";
 import { useAccount } from "wagmi";
-import { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Sidebar from "@/components/Sidebar";
+import { ChainProvider } from "@/lib/ChainContext";
 
 export default function DashboardLayout({
   children,
@@ -10,7 +10,6 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const { isConnected } = useAccount();
-  const [selectedChain, setSelectedChain] = useState(1);
 
   if (!isConnected) {
     return (
@@ -21,12 +20,14 @@ export default function DashboardLayout({
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-950">
-      <Navbar selectedChain={selectedChain} onChainChange={setSelectedChain} />
-      <div className="flex flex-1">
-        <Sidebar />
-        <main className="flex-1 p-6">{children}</main>
+    <ChainProvider>
+      <div className="flex flex-col min-h-screen bg-gray-950">
+        <Navbar />
+        <div className="flex flex-1">
+          <Sidebar />
+          <main className="flex-1 p-6">{children}</main>
+        </div>
       </div>
-    </div>
+    </ChainProvider>
   );
 }
