@@ -73,3 +73,27 @@ export async function getNativeBalance(
 
     return (Number(balance)/1e18).toFixed(6);
 }
+
+export type NFTItem = {
+    name: string;
+    collection: string;
+    tokenId: string;
+    image: string | null;
+    contractAddress: string;
+};
+
+export async function getNFTsForOwner(
+    address: string,
+    chainId: number = 1
+): Promise<NFTItem[]> {
+    const alchemy = getAlchemy(chainId);
+    const response = await alchemy.nft.getNftsForOwner(address);
+
+    return response.ownedNfts.map((nft) => ({
+        name: nft.name || `#${nft.tokenId}`,
+        collection: nft.contract.name || "Unknown Collection",
+        tokenId: nft.tokenId,
+        image: nft.image?.thumbnailUrl || nft.image?.cachedUrl || null,
+        contractAddress: nft.contract.address,
+    }));
+}

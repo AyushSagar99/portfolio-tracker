@@ -1,6 +1,3 @@
-import { headers } from "next/headers";
-
-
 const COINGECKO_BASE="https://api.coingecko.com/api/v3"
 
 const chainToPlatform: Record<number,string>={
